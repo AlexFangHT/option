@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Options & Greeks Calculator</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Options &amp; Greeks Calculator</h1>
+      <p class="subtitle">Black-Scholes / Merton pricing with full Greeks</p>
+    </header>
+
+    <main>
+      <section class="panel inputs">
+        <h2>Inputs</h2>
+        <form id="optionForm">
+          <div class="field">
+            <label>Position</label>
+            <div class="toggle" id="positionToggle" role="group" aria-label="Position">
+              <button type="button" class="toggle-btn active" data-value="buy">Buy</button>
+              <button type="button" class="toggle-btn" data-value="sell">Sell</button>
+            </div>
+            <input type="hidden" id="position" value="buy" />
+          </div>
+
+          <div class="field">
+            <div class="input-pair">
+              <label for="premium">Premium</label>
+              <label for="mw">MW</label>
+              <input type="number" id="premium" step="any" min="0" value="0" placeholder="e.g. 5.00" />
+              <input type="number" id="mw" step="any" min="0" value="0" placeholder="e.g. 10" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="tradeDate">As At Date</label>
+            <input type="date" id="tradeDate" required />
+          </div>
+
+          <div class="field">
+            <label for="periodType">Period Type</label>
+            <select id="periodType">
+              <option value="strip">Strip</option>
+              <option value="qtr">Qtr</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="period">Period</label>
+            <select id="period"></select>
+          </div>
+
+          <div class="field">
+            <label>Option Type</label>
+            <div class="toggle" id="optionTypeToggle" role="group" aria-label="Option type">
+              <button type="button" class="toggle-btn active" data-value="call">Call</button>
+              <button type="button" class="toggle-btn" data-value="put">Put</button>
+            </div>
+            <input type="hidden" id="optionType" value="call" />
+          </div>
+
+          <div class="field">
+            <label for="spot">Spot Price (S)</label>
+            <div class="slider-row">
+              <input type="range" id="spotRange" min="1" max="500" step="0.5" value="100" />
+              <input type="number" id="spot" step="any" min="0" value="100" placeholder="e.g. 100" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="strike">Strike Price (K)</label>
+            <div class="slider-row">
+              <input type="range" id="strikeRange" min="1" max="500" step="0.5" value="100" />
+              <input type="number" id="strike" step="any" min="0" value="100" placeholder="e.g. 100" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="volatility">Volatility (σ, %)</label>
+            <div class="slider-row">
+              <input type="range" id="volatilityRange" min="1" max="150" step="0.5" value="20" />
+              <input type="number" id="volatility" step="any" min="0" value="20" placeholder="e.g. 20" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="timeUnit">Time to Expiry</label>
+            <div class="split">
+              <input type="number" id="timeValue" step="any" min="0" value="30" readonly />
+              <select id="timeUnit">
+                <option value="days">Days</option>
+                <option value="years">Years</option>
+              </select>
+            </div>
+            <span class="hint">Computed from As At Date and Period</span>
+          </div>
+
+          <div class="field field-inline">
+            <label for="rate">Risk-Free Rate (r, %)</label>
+            <input type="number" id="rate" step="any" value="0" placeholder="e.g. 5" required />
+          </div>
+
+          <div class="field field-inline">
+            <label for="dividend">Dividend Yield (q, %)</label>
+            <input type="number" id="dividend" step="any" value="0" placeholder="e.g. 0" />
+          </div>
+
+          <div class="actions">
+            <button type="button" id="resetBtn" class="secondary">Reset</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel results" id="results" hidden>
+        <div class="results-header">
+          <h2>Results</h2>
+          <div class="toggle" id="displayModeToggle" role="group" aria-label="Display mode">
+            <button type="button" class="toggle-btn active" data-value="unit">Unit</button>
+            <button type="button" class="toggle-btn" data-value="total">Total</button>
+          </div>
+          <input type="hidden" id="displayMode" value="unit" />
+        </div>
+
+        <div class="result-group">
+          <h3>Price</h3>
+          <div class="cards">
+            <div class="card highlight">
+              <span class="label">Option Price</span>
+              <span class="value" id="outPrice">-</span>
+            </div>
+            <div class="card">
+              <span class="label">d1</span>
+              <span class="value" id="outD1">-</span>
+            </div>
+            <div class="card">
+              <span class="label">d2</span>
+              <span class="value" id="outD2">-</span>
+            </div>
+            <div class="card">
+              <span class="label">MTM (P&amp;L)</span>
+              <span class="value" id="outMtm">-</span>
+              <span class="hint">vs premium paid/received</span>
+            </div>
+            <div class="card">
+              <span class="label">Implied Volatility</span>
+              <span class="value" id="outIv">-</span>
+              <span class="hint">from premium input</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-group">
+          <h3>Greeks</h3>
+          <div class="cards">
+            <div class="card">
+              <span class="label">Delta (Δ)</span>
+              <span class="value" id="outDelta">-</span>
+            </div>
+            <div class="card">
+              <span class="label">Gamma (Γ)</span>
+              <span class="value" id="outGamma">-</span>
+            </div>
+            <div class="card">
+              <span class="label">Vega (ν)</span>
+              <span class="value" id="outVega">-</span>
+              <span class="hint">per 1% vol change</span>
+            </div>
+            <div class="card">
+              <span class="label">Theta (Θ)</span>
+              <span class="value" id="outTheta">-</span>
+              <span class="hint">per day</span>
+            </div>
+            <div class="card">
+              <span class="label">Rho (ρ)</span>
+              <span class="value" id="outRho">-</span>
+              <span class="hint">per 1% rate change</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="result-group">
+          <h3>Distribution of Underlying at Expiry</h3>
+          <div class="chart-wrap">
+            <canvas id="distChart" width="640" height="260"></canvas>
+            <div class="legend">
+              <span><i class="swatch spot"></i>Spot (S)</span>
+              <span><i class="swatch strike"></i>Strike (K)</span>
+              <span><i class="swatch mean"></i>Expected price E[S<sub>T</sub>]</span>
+              <span><i class="swatch fill"></i>In-the-money region</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel error" id="errorBox" hidden></section>
+    </main>
+
+    <footer>
+      <p>Black-Scholes-Merton model. For education purposes only, not investment advice.</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
