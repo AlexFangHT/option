@@ -65,7 +65,7 @@
           <div class="field">
             <label for="spot">Spot Price (S)</label>
             <div class="slider-row">
-              <input type="range" id="spotRange" min="1" max="500" step="0.5" value="100" />
+              <input type="range" id="spotRange" min="30" max="150" step="0.5" value="100" />
               <input type="number" id="spot" step="any" min="0" value="100" placeholder="e.g. 100" required />
             </div>
           </div>
@@ -73,7 +73,7 @@
           <div class="field">
             <label for="strike">Strike Price (K)</label>
             <div class="slider-row">
-              <input type="range" id="strikeRange" min="1" max="500" step="0.5" value="100" />
+              <input type="range" id="strikeRange" min="20" max="200" step="0.5" value="100" />
               <input type="number" id="strike" step="any" min="0" value="100" placeholder="e.g. 100" required />
             </div>
           </div>
@@ -81,13 +81,22 @@
           <div class="field">
             <label for="volatility">Volatility (σ, %)</label>
             <div class="slider-row">
-              <input type="range" id="volatilityRange" min="1" max="150" step="0.5" value="20" />
+              <input type="range" id="volatilityRange" min="0" max="100" step="0.5" value="20" />
               <input type="number" id="volatility" step="any" min="0" value="20" placeholder="e.g. 20" required />
             </div>
           </div>
 
           <div class="field">
-            <label for="timeUnit">Time to Expiry</label>
+            <label for="timeUnit" class="label-with-info">
+              Time to Expiry
+              <span
+                class="info-icon"
+                role="img"
+                tabindex="0"
+                title="Expiry is the end date of the selected period: quarter end for Qtr, or the applicable May 19 / November 19 date for Fin / Cal strips."
+                aria-label="Expiry date definition"
+              >i</span>
+            </label>
             <div class="split">
               <input type="number" id="timeValue" step="any" min="0" value="30" readonly />
               <select id="timeUnit">
@@ -128,24 +137,39 @@
           <h3>Price</h3>
           <div class="cards">
             <div class="card highlight">
-              <span class="label">Option Price</span>
+              <span class="label label-with-info">
+                Option Price
+                <span class="info-icon" role="img" tabindex="0" title="Call: S exp(-qT) N(d1) - K exp(-rT) N(d2). Put: K exp(-rT) N(-d2) - S exp(-qT) N(-d1)." aria-label="Option price formula">i</span>
+              </span>
               <span class="value" id="outPrice">-</span>
             </div>
             <div class="card">
-              <span class="label">d1</span>
+              <span class="label label-with-info">
+                d1
+                <span class="info-icon" role="img" tabindex="0" title="d1 = [ln(S / K) + (r - q + sigma squared / 2)T] / (sigma sqrt(T))." aria-label="d1 formula">i</span>
+              </span>
               <span class="value" id="outD1">-</span>
             </div>
             <div class="card">
-              <span class="label">d2</span>
+              <span class="label label-with-info">
+                d2
+                <span class="info-icon" role="img" tabindex="0" title="d2 = d1 - sigma sqrt(T)." aria-label="d2 formula">i</span>
+              </span>
               <span class="value" id="outD2">-</span>
             </div>
             <div class="card">
-              <span class="label">MTM (P&amp;L)</span>
+              <span class="label label-with-info">
+                MTM (P&amp;L)
+                <span class="info-icon" role="img" tabindex="0" title="MTM = position sign x (option price - premium), multiplied by MW and period hours in Total mode." aria-label="MTM formula">i</span>
+              </span>
               <span class="value" id="outMtm">-</span>
               <span class="hint">vs premium paid/received</span>
             </div>
             <div class="card">
-              <span class="label">Implied Volatility</span>
+              <span class="label label-with-info">
+                Implied Volatility
+                <span class="info-icon" role="img" tabindex="0" title="The volatility solved numerically so the Black-Scholes option price equals the input premium." aria-label="Implied volatility formula">i</span>
+              </span>
               <span class="value" id="outIv">-</span>
               <span class="hint">from premium input</span>
             </div>
@@ -156,25 +180,40 @@
           <h3>Greeks</h3>
           <div class="cards">
             <div class="card">
-              <span class="label">Delta (Δ)</span>
+              <span class="label label-with-info">
+                Delta (Δ)
+                <span class="info-icon" role="img" tabindex="0" title="Call delta = exp(-qT) N(d1). Put delta = -exp(-qT) N(-d1)." aria-label="Delta formula">i</span>
+              </span>
               <span class="value" id="outDelta">-</span>
             </div>
             <div class="card">
-              <span class="label">Gamma (Γ)</span>
+              <span class="label label-with-info">
+                Gamma (Γ)
+                <span class="info-icon" role="img" tabindex="0" title="Gamma = exp(-qT) phi(d1) / (S sigma sqrt(T))." aria-label="Gamma formula">i</span>
+              </span>
               <span class="value" id="outGamma">-</span>
             </div>
             <div class="card">
-              <span class="label">Vega (ν)</span>
+              <span class="label label-with-info">
+                Vega (ν)
+                <span class="info-icon" role="img" tabindex="0" title="Vega = S exp(-qT) phi(d1) sqrt(T), scaled per 1% volatility change." aria-label="Vega formula">i</span>
+              </span>
               <span class="value" id="outVega">-</span>
               <span class="hint">per 1% vol change</span>
             </div>
             <div class="card">
-              <span class="label">Theta (Θ)</span>
+              <span class="label label-with-info">
+                Theta (Θ)
+                <span class="info-icon" role="img" tabindex="0" title="Call theta = [-S phi(d1) sigma exp(-qT) / (2 sqrt(T))] - r K exp(-rT) N(d2) + q S exp(-qT) N(d1). Put theta = [-S phi(d1) sigma exp(-qT) / (2 sqrt(T))] + r K exp(-rT) N(-d2) - q S exp(-qT) N(-d1). Scaled per day by dividing by 365." aria-label="Theta formula">i</span>
+              </span>
               <span class="value" id="outTheta">-</span>
               <span class="hint">per day</span>
             </div>
             <div class="card">
-              <span class="label">Rho (ρ)</span>
+              <span class="label label-with-info">
+                Rho (ρ)
+                <span class="info-icon" role="img" tabindex="0" title="Call rho = K T exp(-rT) N(d2). Put rho = -K T exp(-rT) N(-d2), scaled per 1% rate change." aria-label="Rho formula">i</span>
+              </span>
               <span class="value" id="outRho">-</span>
               <span class="hint">per 1% rate change</span>
             </div>
