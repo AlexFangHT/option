@@ -32,6 +32,28 @@ header h1 {
   font-size: 1.8rem;
 }
 
+.page-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.page-nav a {
+  color: var(--muted);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 7px 10px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.page-nav a:hover,
+.page-nav a.active {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
 .subtitle {
   margin: 0 0 24px;
   color: var(--muted);
@@ -390,4 +412,160 @@ footer {
   color: var(--muted);
   font-size: 0.8rem;
   text-align: center;
+}
+
+.strategy-layout {
+  grid-template-columns: 1fr;
+}
+
+.strategy-summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.strategy-summary .positive {
+  color: var(--accent-2);
+}
+
+.strategy-summary .negative {
+  color: var(--danger);
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.trade-card {
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 0;
+  background: #10141f;
+}
+
+#tradeList {
+  display: grid;
+  grid-template-columns: 126px repeat(var(--trade-count, 1), minmax(155px, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+}
+
+.trade-labels,
+.trade-card {
+  display: grid;
+  grid-template-rows: 32px repeat(6, minmax(36px, auto));
+  gap: 8px;
+  min-width: 0;
+}
+
+.trade-labels {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 14px 0;
+}
+
+.trade-labels > div {
+  display: flex;
+  align-items: center;
+}
+
+.trade-label-heading {
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.trade-card .field {
+  margin-bottom: 0;
+  gap: 0;
+}
+
+.trade-card .field-inline input[type="number"],
+.trade-card .field-inline select {
+  width: 100%;
+}
+
+.trade-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0;
+}
+
+.trade-header h3 {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.remove-trade {
+  padding: 2px 7px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.remove-trade:hover {
+  color: var(--danger);
+}
+
+.add-trade {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--panel-border);
+  border-radius: 50%;
+  color: var(--accent);
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.add-trade:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: rgba(79, 140, 255, 0.08);
+}
+
+.add-trade:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.payoff-chart-wrap {
+  padding: 12px;
+}
+
+#payoffChart {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.swatch.payoff-individual {
+  background: #8fa9d9;
+}
+
+.swatch.payoff-net {
+  background: var(--accent-2);
+  height: 4px;
+}
+
+.swatch.payoff-negative {
+  background: var(--danger);
+}
+
+@media (max-width: 799px) {
+  .strategy-layout {
+    grid-template-columns: 1fr;
+  }
+
+  #tradeList {
+    grid-template-columns: 110px repeat(var(--trade-count, 1), minmax(145px, 1fr));
+  }
 }

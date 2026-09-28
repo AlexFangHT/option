@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Option Strategy Payoff</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <nav class="page-nav" aria-label="Pages">
+        <a href="index.html">Calculator</a>
+        <a href="strategy.html" class="active" aria-current="page">Strategy Payoff</a>
+      </nav>
+      <h1>Option Strategy Payoff</h1>
+      <p class="subtitle">See profit and loss at expiry across underlying prices</p>
+    </header>
+
+    <main class="strategy-layout">
+      <section class="panel inputs">
+        <h2 class="section-heading">
+          <span>Strategy Inputs</span>
+          <button type="button" id="addTradeBtn" class="add-trade" aria-label="Add trade" title="Add another trade">+</button>
+        </h2>
+        <form id="strategyForm">
+          <div id="tradeList">
+            <div class="trade-labels" aria-hidden="true">
+              <div class="trade-label-heading">Trade</div>
+              <div>Position</div>
+              <div>Option Type</div>
+              <div>Spot Price (S)</div>
+              <div>Strike Price (K)</div>
+              <div>Premium</div>
+              <div>Position Size (MW)</div>
+            </div>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel strategy-results">
+        <div class="results-header">
+          <h2>Payoff at Expiry</h2>
+          <span class="hint" id="payoffBasis">Total payoff</span>
+        </div>
+        <div class="strategy-summary" aria-live="polite">
+          <div class="card">
+            <span class="label">Break-even</span>
+            <span class="value" id="outBreakeven">-</span>
+          </div>
+          <div class="card">
+            <span class="label">Max Profit</span>
+            <span class="value positive" id="outMaxProfit">-</span>
+          </div>
+          <div class="card">
+            <span class="label">Max Loss</span>
+            <span class="value negative" id="outMaxLoss">-</span>
+          </div>
+          <div class="card">
+            <span class="label">Payoff at Spot</span>
+            <span class="value" id="outSpotPayoff">-</span>
+          </div>
+        </div>
+        <div class="chart-wrap payoff-chart-wrap">
+          <canvas id="payoffChart" width="760" height="400"></canvas>
+          <div class="legend">
+            <span><i class="swatch payoff-individual"></i>Individual trade payoff</span>
+            <span><i class="swatch payoff-net"></i>Net payoff</span>
+            <span><i class="swatch spot"></i>Spot (S)</span>
+            <span><i class="swatch strike"></i>Strike (K)</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel error" id="strategyError" hidden></section>
+    </main>
+
+    <footer>
+      <p>Payoff shown at expiry. For education purposes only, not investment advice.</p>
+    </footer>
+  </div>
+
+  <script src="strategy.js"></script>
+</body>
+</html>
