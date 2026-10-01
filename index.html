@@ -31,6 +31,15 @@
           </div>
 
           <div class="field">
+            <label>Option Type</label>
+            <div class="toggle" id="optionTypeToggle" role="group" aria-label="Option type">
+              <button type="button" class="toggle-btn active" data-value="call">Call</button>
+              <button type="button" class="toggle-btn" data-value="put">Put</button>
+            </div>
+            <input type="hidden" id="optionType" value="call" />
+          </div>
+
+          <div class="field">
             <div class="input-pair">
               <label for="premium">Premium</label>
               <label for="mw">MW</label>
@@ -55,15 +64,6 @@
           <div class="field">
             <label for="period">Period</label>
             <select id="period"></select>
-          </div>
-
-          <div class="field">
-            <label>Option Type</label>
-            <div class="toggle" id="optionTypeToggle" role="group" aria-label="Option type">
-              <button type="button" class="toggle-btn active" data-value="call">Call</button>
-              <button type="button" class="toggle-btn" data-value="put">Put</button>
-            </div>
-            <input type="hidden" id="optionType" value="call" />
           </div>
 
           <div class="field">
@@ -232,7 +232,7 @@
               <span><i class="swatch spot"></i>Spot (S)</span>
               <span><i class="swatch strike"></i>Strike (K)</span>
               <span><i class="swatch mean"></i>Expected price E[S<sub>T</sub>]</span>
-              <span><i class="swatch fill"></i>In-the-money region</span>
+              <span><i class="swatch fill"></i><span id="regionLabel">In-the-money</span></span>
             </div>
           </div>
         </div>

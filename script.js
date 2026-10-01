@@ -214,17 +214,18 @@ function renderResults(result, inputs) {
   const isTotal = inputs.displayMode === "total";
   const scale = isTotal ? inputs.mw * computeHoursForPeriod(inputs.periodType, inputs.period) : 1;
   const decimals = isTotal ? 2 : 4;
+  const positionSign = inputs.position === "sell" ? -1 : 1;
   const iv = impliedVolatility(inputs);
 
   document.getElementById("outPrice").textContent = formatNumber(result.price * scale, 2);
   document.getElementById("outIv").textContent = Number.isFinite(iv) ? `${formatNumber(iv * 100, 2)}%` : "-";
   document.getElementById("outD1").textContent = formatNumber(result.d1, decimals);
   document.getElementById("outD2").textContent = formatNumber(result.d2, decimals);
-  document.getElementById("outDelta").textContent = formatNumber(result.delta * scale, decimals);
-  document.getElementById("outGamma").textContent = formatNumber(result.gamma * scale, decimals);
-  document.getElementById("outVega").textContent = formatNumber(result.vega * scale, decimals);
-  document.getElementById("outTheta").textContent = formatNumber(result.theta * scale, decimals);
-  document.getElementById("outRho").textContent = formatNumber(result.rho * scale, decimals);
+  document.getElementById("outDelta").textContent = formatNumber(result.delta * positionSign * scale, decimals);
+  document.getElementById("outGamma").textContent = formatNumber(result.gamma * positionSign * scale, decimals);
+  document.getElementById("outVega").textContent = formatNumber(result.vega * positionSign * scale, decimals);
+  document.getElementById("outTheta").textContent = formatNumber(result.theta * positionSign * scale, decimals);
+  document.getElementById("outRho").textContent = formatNumber(result.rho * positionSign * scale, decimals);
 
   // MTM: a long position gains as price rises above premium paid, a short position gains the opposite
   const sign = inputs.position === "sell" ? -1 : 1;
@@ -251,7 +252,7 @@ function drawDistribution(inputs) {
   const { width, height } = canvas;
   ctx.clearRect(0, 0, width, height);
 
-  const { S, K, r, q, sigma, T, type } = inputs;
+  const { S, K, r, q, sigma, T, type, position } = inputs;
   const mu = Math.log(S) + (r - q - 0.5 * sigma * sigma) * T;
   const sd = sigma * Math.sqrt(T);
   const meanPrice = Math.exp(mu + 0.5 * sd * sd);
@@ -279,15 +280,20 @@ function drawDistribution(inputs) {
   const toPx = (x) => padding.left + ((x - xMin) / (xMax - xMin)) * plotW;
   const toPy = (y) => padding.top + plotH - (y / yMax) * plotH;
 
-  // shade in-the-money region (S_T > K for call, S_T < K for put)
+  const highlightInMoney = position !== "sell";
+  const isInMoney = (x) => type === "call" ? x >= K : x <= K;
+  const isHighlighted = (x) => highlightInMoney ? isInMoney(x) : !isInMoney(x);
+  const startsAtLeft = type === "call" ? !highlightInMoney : highlightInMoney;
+  const regionStart = startsAtLeft ? xMin : Math.max(K, xMin);
+  const regionEnd = startsAtLeft ? Math.min(K, xMax) : xMax;
+
   ctx.beginPath();
-  ctx.moveTo(toPx(type === "call" ? Math.max(K, xMin) : xMin), toPy(0));
+  ctx.moveTo(toPx(regionStart), toPy(0));
   for (let i = 0; i <= points; i++) {
     const x = xs[i];
-    const inRegion = type === "call" ? x >= K : x <= K;
-    if (inRegion) ctx.lineTo(toPx(x), toPy(ys[i]));
+    if (isHighlighted(x)) ctx.lineTo(toPx(x), toPy(ys[i]));
   }
-  ctx.lineTo(toPx(type === "call" ? xMax : Math.min(K, xMax)), toPy(0));
+  ctx.lineTo(toPx(regionEnd), toPy(0));
   ctx.closePath();
   ctx.fillStyle = "rgba(79, 140, 255, 0.25)";
   ctx.fill();
